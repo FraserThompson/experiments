@@ -1,1 +1,1 @@
-"# experiments at schwang.space" 
+"# experiments at schway.space" 
