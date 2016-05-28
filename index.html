@@ -1,63 +1,89 @@
 <!DOCTYPE html>
 <html>
-  <body>
-	<p>😂</p>
-	<form onsubmit="return false;">
-		<label for="rate">Rate</label>
-		<input type="range" id="rate" step="0.1" max="2" min="0" oninput="updateRange(this.value);"/>
-		<output name="rangeOutput" id="rangeOutput">1</output>
+	<head>
+		<title>schway.space</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+	</head>
+  	<body>
 
-		<label for="pitch">Pitch</label>
-		<input type="range" id="pitch" step="0.1" max="2" min="0" oninput="updatePitch(this.value);"/>
-		<output name="pitchOutput" id="pitchOutput">1</output>
+		<form onsubmit="return false;">
+			<div class="container">
+				<div class="row">
+					<h1>😂</h1>
+				</div>
+				<div class="row">
+				    <div class="ten column">
+						<label for="rate">Rate</label>
+						<input style="width:100%;" type="range" id="rate" step="0.1" max="2" min="0.1" oninput="updateRange(this.value);"/>
+					</div>
+					<div class="two column">
+						<output name="rangeOutput" id="rangeOutput">1</output>
+					</div>
+				</div>
+				<div class="row">
+				    <div class="ten column">
+						<label for="pitch">Pitch</label>
+						<input style="width:100%;" type="range" id="pitch" step="0.1" max="2" min="0.1" oninput="updatePitch(this.value);"/>
+					</div>
+					<div class="two column">
+						<output name="pitchOutput" id="pitchOutput">1</output>
+					</div>
+				</div>
+				<div class="row">
+				    <div class="eight column">
+						<input style="width: 100%" type="text" id="message" placeholder="Enter something to say"/>
+					</div>
+				</div>
+				<div class="row">
+					<div class="four column">
+						<input type="submit" value="Talk" id="go" onclick="talk();"/>
+					</div>
+				</div>
+			</div>
+		</form>
+		<script>
 
-		<input type="text" id="message" placeholder="Enter something to say"/>
-		<input type="submit" value="Talk" id="go" onclick="talk();"/>
-	</form>
-	<script>
+			function updateRange(val) {
+		      document.getElementById('rangeOutput').value=val; 
+		    }
 
-		function updateRange(val) {
-	      document.getElementById('rangeOutput').value=val; 
-	    }
-
-	    function updatePitch(val) {
-	      document.getElementById('pitchOutput').value=val; 
-	    }
+		    function updatePitch(val) {
+		      document.getElementById('pitchOutput').value=val; 
+		    }
 
 
-		var voices = [];
+			var voices = [];
 
-		window.speechSynthesis.onvoiceschanged = function() {
-			voices = window.speechSynthesis.getVoices();
+			window.speechSynthesis.onvoiceschanged = function() {
+				voices = window.speechSynthesis.getVoices();
+				console.log(voices);
 
-			console.log(voices);
+			    // speechSynthesis.speak(msg);
+			};
 
-		    // speechSynthesis.speak(msg);
-		};
+			function talk() {
+				var msg = new SpeechSynthesisUtterance();
+			    msg.voiceURI = 'native';
+			    msg.volume = 1;
+			    msg.rate = document.getElementById('rate').value;
+			    msg.pitch = document.getElementById('pitch').value;
+			    //msg.text = 'Hello and welcome to schway.space the best place on the internet to have a good time. How are you today. The time is ' + hours + ' ' + minutes + ' and it is ' + day;
+			    msg.lang = 'ja-JP';
+			    msg.voice = voices[11]
+				msg.text = document.getElementById('message').value;
+				speechSynthesis.speak(msg);
+			}
 
-		function talk() {
-			var msg = new SpeechSynthesisUtterance();
-		    msg.voiceURI = 'native';
-		    msg.volume = 1;
-		    msg.rate = document.getElementById('rate').value;
-		    msg.pitch = document.getElementById('pitch').value;
-		    //msg.text = 'Hello and welcome to schway.space the best place on the internet to have a good time. How are you today. The time is ' + hours + ' ' + minutes + ' and it is ' + day;
-		    msg.lang = 'ja-JP';
-		    msg.voice = voices[11]
-			msg.text = document.getElementById('message').value;
-			speechSynthesis.speak(msg);
-		}
+	 		var weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+	    	var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+			var currentDate = new Date()
+			var day = weekdays[currentDate.getDate()];
+			var month = months[currentDate.getMonth()];
+			var year = currentDate.getFullYear()
 
- 		var weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    	var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-		var currentDate = new Date()
-		var day = weekdays[currentDate.getDate()];
-		var month = months[currentDate.getMonth()];
-		var year = currentDate.getFullYear()
-
-		var hours = currentDate.getHours();
-	 	var minutes = currentDate.getMinutes();
-	  	var ampm = hours >= 12 ? 'pm' : 'am';
-	</script>
-  </body>
+			var hours = currentDate.getHours();
+		 	var minutes = currentDate.getMinutes();
+		  	var ampm = hours >= 12 ? 'pm' : 'am';
+		</script>
+  	</body>
 </html>
