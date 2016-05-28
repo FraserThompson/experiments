@@ -1,33 +1,48 @@
 <!DOCTYPE html>
 <html>
   <body>
-	<h1>test</h1>
-	<p>welcome!</p>
+	<p>😂</p>
+	<script>
+		function debounce(func, wait, immediate) {
+		    var timeout;
+		    return function() {
+		        var context = this, args = arguments;
+		        var later = function() {
+		            timeout = null;
+		            if (!immediate) func.apply(context, args);
+		        };
+		        var callNow = immediate && !timeout;
+		        clearTimeout(timeout);
+		        timeout = setTimeout(later, wait);
+		        if (callNow) func.apply(context, args);
+		    };
+		};
+
+
+ 		var weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    	var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+		var msg = new SpeechSynthesisUtterance();
+		var currentDate = new Date()
+		var day = weekdays[currentDate.getDate()];
+		var month = months[currentDate.getMonth()];
+		var year = currentDate.getFullYear()
+
+		var hours = currentDate.getHours();
+	 	var minutes = currentDate.getMinutes();
+	  	var ampm = hours >= 12 ? 'pm' : 'am';
+
+
+		window.speechSynthesis.onvoiceschanged = function() {
+			var voices = window.speechSynthesis.getVoices();
+			msg.voice = voices[16]
+		    msg.voiceURI = 'native';
+		    msg.volume = 1;
+		    msg.rate = 0.5;
+		    msg.pitch = 0.1;
+		    msg.text = 'Hello and welcome to schway.space the best place on the internet to have a good time. How are you today. The time is ' + hours + ' ' + minutes + ' ' + ampm + ' and it is ' + weekdays;
+		    msg.lang = 'ru-RU';
+		    speechSynthesis.speak(msg);
+		};
+	</script>
   </body>
 </html>
-
-<script>
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '1789426301269652',
-      xfbml      : true,
-      version    : 'v2.6'
-    });
-  };
-
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "https://connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
-
-  	setTimeout(function() {
-
-		FB.getLoginStatus(function(response) {
-		  	console.log(response);
-		});
-  	}, 3000)
-
-</script>
