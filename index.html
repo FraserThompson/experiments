@@ -8,37 +8,54 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
 	</head>
   	<body>
-
 		<form onsubmit="return false;">
 			<div class="container">
 				<div class="row">
-					<h1>😂</h1>
+					<div class="twelve columns">
+						<center><h1>😂</h1></center>
+					</div>
 				</div>
 				<div class="row">
-				    <div class="ten column">
+					<div class="five columns">
+						<fieldset>
+							<label><input type="radio" name="language" value="japanese" checked>Japanese</label>
+							<label><input type="radio" name="language" value="russian"> Russian</label>
+							<label><input type="radio" name="language" value="uk"> UK English</label>
+							<label><input type="radio" name="language" value="indian"> Indian</label>
+						</fieldset>
+					</div>
+					<div class="five columns">
+						<fieldset>
+							<label><input type="radio" name="language" value="chinese"> Chinese</label>
+							<label><input type="radio" name="language" value="german"> German</label>
+							<label><input type="radio" name="language" value="us"> US English</label>
+							<label><input type="radio" name="language" value="polish"> Polish</label>
+						</fieldset>
+					</div>
+				</div>
+				<div class="row">
+				    <div class="ten columns">
 						<label for="rate">Rate</label>
 						<input style="width:100%;" type="range" id="rate" step="0.1" max="2" min="0.1" oninput="updateRange(this.value);"/>
 					</div>
-					<div class="two column">
+					<div class="two columns">
 						<output name="rangeOutput" id="rangeOutput">1</output>
 					</div>
 				</div>
 				<div class="row">
-				    <div class="ten column">
+				    <div class="ten columns">
 						<label for="pitch">Pitch</label>
 						<input style="width:100%;" type="range" id="pitch" step="0.1" max="2" min="0.1" oninput="updatePitch(this.value);"/>
 					</div>
-					<div class="two column">
+					<div class="two columns">
 						<output name="pitchOutput" id="pitchOutput">1</output>
 					</div>
 				</div>
 				<div class="row">
-				    <div class="eight column">
-						<input style="width: 100%" type="text" id="message" placeholder="Enter something to say"/>
+				    <div class="ten columns">
+						<input style="width: 100%" type="text" id="message" value="you used to call me on your cellphone"/>
 					</div>
-				</div>
-				<div class="row">
-					<div class="four column">
+					<div class="two columns">
 						<input type="submit" value="Talk" id="go" onclick="talk();"/>
 					</div>
 				</div>
@@ -57,6 +74,8 @@
 
 			var voices = [];
 
+			var languages = {'japanese': [11, 'ja-JP'], 'russian': [16, 'ru-RU'], 'uk': [3, 'en-GB'], 'indian': [8, 'hi-IN'], 'chinese': [17, 'zh-CN'], 'polish': [14, 'pl-PL'], 'german': [1, 'de-DE'], 'us': [2, 'en-US']};
+
 			window.speechSynthesis.onvoiceschanged = function() {
 				voices = window.speechSynthesis.getVoices();
 				console.log(voices);
@@ -66,13 +85,14 @@
 
 			function talk() {
 				var msg = new SpeechSynthesisUtterance();
+				var chosenLanguage = languages[document.querySelector('input[name="language"]:checked').value]; 
 			    msg.voiceURI = 'native';
 			    msg.volume = 1;
 			    msg.rate = document.getElementById('rate').value;
 			    msg.pitch = document.getElementById('pitch').value;
 			    //msg.text = 'Hello and welcome to schway.space the best place on the internet to have a good time. How are you today. The time is ' + hours + ' ' + minutes + ' and it is ' + day;
-			    msg.lang = 'ja-JP';
-			    msg.voice = voices[11]
+			    msg.lang = chosenLanguage[1];
+			    msg.voice = voices[chosenLanguage[0]]
 				msg.text = document.getElementById('message').value;
 				speechSynthesis.speak(msg);
 			}
