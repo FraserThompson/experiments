@@ -16,7 +16,7 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="five columns">
+					<div style="float: left;">
 						<fieldset>
 							<label><input type="radio" name="language" value="japanese" checked>Japanese</label>
 							<label><input type="radio" name="language" value="russian"> Russian</label>
@@ -24,7 +24,7 @@
 							<label><input type="radio" name="language" value="indian"> Indian</label>
 						</fieldset>
 					</div>
-					<div class="five columns">
+					<div style="float: right;">
 						<fieldset>
 							<label><input type="radio" name="language" value="chinese"> Chinese</label>
 							<label><input type="radio" name="language" value="german"> German</label>
@@ -62,7 +62,7 @@
 			</div>
 		</form>
 		<button onclick="startRecognizing();"></button>
-		<p id="result"></p>
+		<pre id="result"></pre>
 		<script>
 
 			function startRecognizing() {
@@ -74,7 +74,7 @@
 
 				recognition.onresult = function(event) { 
 				  console.log(event)
-				  result.innerHTML = event['results'][0][0]['transcript'];
+				  result.innerHTML = event['results'];
 				}
 
 				recognition.start();
