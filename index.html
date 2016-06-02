@@ -7,7 +7,7 @@
 		<title>schway.space</title>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
 	</head>
-  	<body>
+  	<body id="everything" style="display: none;">
 		<form onsubmit="return false;">
 			<div class="container">
 				<div class="row">
@@ -16,7 +16,7 @@
 					</div>
 				</div>
 				<div class="row">
-					<div style="float: left;">
+					<div class="six columns">
 						<fieldset>
 							<label><input type="radio" name="language" value="japanese" checked>Japanese</label>
 							<label><input type="radio" name="language" value="russian"> Russian</label>
@@ -24,7 +24,7 @@
 							<label><input type="radio" name="language" value="indian"> Indian</label>
 						</fieldset>
 					</div>
-					<div style="float: right;">
+					<div class="six columns">
 						<fieldset>
 							<label><input type="radio" name="language" value="chinese"> Chinese</label>
 							<label><input type="radio" name="language" value="german"> German</label>
@@ -59,11 +59,49 @@
 						<input type="submit" value="Talk" id="go" onclick="talk();"/>
 					</div>
 				</div>
+				<div class="row">
+					<div class="two columns">
+						<input type="button" value="Generate link" id="link" onclick="generateLink();"/>
+					</div>
+					<div class="ten columns">
+						<a id="linkOutput"></a>
+					</div>
+				</div>
+				<div class="row" style="display: none;">
+					<div class="ten columns">
+						<button onclick="startRecognizing();">Listen to me</button>
+					</div>
+				</div>
 			</div>
 		</form>
-		<button onclick="startRecognizing();"></button>
 		<pre id="result"></pre>
 		<script>
+			/* Init variables */
+			var languages = {'japanese': [11, 'ja-JP'], 'russian': [16, 'ru-RU'], 'uk': [3, 'en-GB'], 'indian': [8, 'hi-IN'], 'chinese': [17, 'zh-CN'], 'polish': [14, 'pl-PL'], 'german': [1, 'de-DE'], 'us': [2, 'en-US']};
+			var voices = [];
+			var rangeOutput = document.getElementById('rangeOutput');
+			var pitchOutput = document.getElementById('pitchOutput');
+			var rate = document.getElementById('rate');
+			var pitch = document.getElementById('pitch');
+			var message = document.getElementById('message');
+			var linkOutput = document.getElementById('linkOutput');
+			var everything = document.getElementById('everything');
+			var rootURL = "http://schway.space";
+			var loading = true;
+
+			function getQueryParams(qs) {
+			    qs = qs.split('+').join(' ');
+
+			    var params = {},
+			        tokens,
+			        re = /[?&]?([^=]+)=([^&]*)/g;
+
+			    while (tokens = re.exec(qs)) {
+			        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+			    }
+
+			    return params;
+			}
 
 			function startRecognizing() {
 				var recognition = new webkitSpeechRecognition();
@@ -74,57 +112,69 @@
 
 				recognition.onresult = function(event) { 
 				  console.log(event)
-				  result.innerHTML = event['results'];
 				}
 
 				recognition.start();
 			}
 
+			function generateLink() {
+				var link = rootURL + '?s=' + btoa(document.getElementById('message').value) + '&c=' + rate.value + '&h=' + pitch.value + '&w=' + languages[document.querySelector('input[name="language"]:checked').value];
+				linkOutput.innerHTML = link;
+				linkOutput.href = link;
+			}
 
 			function updateRange(val) {
-		      document.getElementById('rangeOutput').value=val; 
+		      rangeOutput.value=val; 
 		    }
 
 		    function updatePitch(val) {
-		      document.getElementById('pitchOutput').value=val; 
+		      pitchOutput.value=val; 
 		    }
-
-
-			var voices = [];
-
-			var languages = {'japanese': [11, 'ja-JP'], 'russian': [16, 'ru-RU'], 'uk': [3, 'en-GB'], 'indian': [8, 'hi-IN'], 'chinese': [17, 'zh-CN'], 'polish': [14, 'pl-PL'], 'german': [1, 'de-DE'], 'us': [2, 'en-US']};
-
-			window.speechSynthesis.onvoiceschanged = function() {
-				voices = window.speechSynthesis.getVoices();
-				console.log(voices);
-
-			    // speechSynthesis.speak(msg);
-			};
 
 			function talk() {
 				var msg = new SpeechSynthesisUtterance();
 				var chosenLanguage = languages[document.querySelector('input[name="language"]:checked').value]; 
 			    msg.voiceURI = 'native';
 			    msg.volume = 1;
-			    msg.rate = document.getElementById('rate').value;
-			    msg.pitch = document.getElementById('pitch').value;
+			    msg.rate = rate.value;
+			    msg.pitch = pitch.value;
 			    //msg.text = 'Hello and welcome to schway.space the best place on the internet to have a good time. How are you today. The time is ' + hours + ' ' + minutes + ' and it is ' + day;
 			    msg.lang = chosenLanguage[1];
 			    msg.voice = voices[chosenLanguage[0]]
-				msg.text = document.getElementById('message').value;
+				msg.text = message.value;
 				speechSynthesis.speak(msg);
 			}
 
-	 		var weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-	    	var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-			var currentDate = new Date()
-			var day = weekdays[currentDate.getDate()];
-			var month = months[currentDate.getMonth()];
-			var year = currentDate.getFullYear()
+			window.speechSynthesis.onvoiceschanged = function() {
+				voices = window.speechSynthesis.getVoices();
 
-			var hours = currentDate.getHours();
-		 	var minutes = currentDate.getMinutes();
-		  	var ampm = hours >= 12 ? 'pm' : 'am';
+				if (loading == true) {
+
+					loading = false;
+
+					/* Check if we have something to say */
+					var queryParams = getQueryParams(document.location.search);
+					if (queryParams.s) {
+						var msg = new SpeechSynthesisUtterance();
+						var chosenLanguage = queryParams.w.split(',');
+
+					    msg.voiceURI = 'native';
+					    msg.volume = 1;
+					    msg.rate = queryParams.c;
+					    msg.pitch = queryParams.h;
+					    msg.lang = chosenLanguage[1];
+					    msg.voice = voices[chosenLanguage[0]]
+						msg.text = atob(queryParams.s);
+						speechSynthesis.speak(msg);
+					} else {
+						everything.style.display = "initial";
+					}
+
+					console.log(voices);
+				}
+			};
+
+
 		</script>
   	</body>
 </html>
