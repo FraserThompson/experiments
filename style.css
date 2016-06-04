@@ -1,0 +1,12 @@
+body, html {
+	overflow-x: hidden;
+}
+
+.wow {
+	transition: all 0.5s ease-in-out;
+}
+
+.wow:hover {
+	text-decoration: none;
+	transform: scaleY(10) scaleX(5) rotateY(360deg) rotateX(360deg) translateY(50px);
+}
